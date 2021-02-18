@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Instagram media downloader</title>
+</head>
+<body>
+    <main>
+        <header class="navbar">
+            <input type="text" value="" placeholder="Enter Instagram Post Link/URL...">
+            <button class="search" onclick="getMedia()">Download</button>
+        </header>
+        <section class="result" id="link-result">
+            <div class="donl-plaeholder"></div>
+            <h2>How It Work?</h2>
+            <p>Enter Instagram Post Link/ URL.</p>
+            <p>Click ownload Button.</p>
+        </section>
+    </main>
+    <script>
+        const _= e =>
+        document.querySelector(e);
+        const render = _('#link-result');
+
+        const createVideo = data => {
+            let v = document.createElement('video');
+            v.id = "instavideo";
+            v.src = data.content;
+            v.controls = true;
+            v.autoplay = true;
+
+            let info = document.createElement('p');
+            info.textContent = "Press and Hold the video and click on save, or with the right mouse button";
+            render.innerHTML = "";
+            render.appendChild(v);
+            render.appendChild(info);
+        };
+
+        const createImg = data => {
+            let i = document.createElement('img');
+            i.id = "instavideo";
+            i.src = data.content;
+            
+            let info = document.createElement('p');
+            info.textContent = "Press and Hold the Image and click on save, or with the right mouse button";
+            
+            render.innerHTML = "";
+            render.appendChild(i);
+            render.appendChild(info);
+        };
+
+        const getMedia = () => {
+            render.innerHTML = "<div class='image-placeholder'></div>";
+            
+            let url = _('input').value;
+            if(url) {
+                fetch(url).then(r => r.text()).then(r => {
+                    render.innerHTML = r;
+
+                    let w = setTimeout(() => {
+                        let v = _('meta[property="og:video"]');
+                        if(v) {
+                            createVideo(v);
+                        }
+                        else{
+                            let img = _('meta[property="og:image"]');
+                            if(img) {
+                                createImg(img);
+                            }else{
+                                document.body.innerHTML = body;
+                                alert('a problem occured while extracting the data');
+                            };
+                        }clearTimeout(w);
+                    },200);
+                });
+            }else{
+                _('input').setAttribute('placeholder','invalid url, pleaseuse another one / retry later...');
+            }
+        };
+    </script>
+</body>
+</html>
